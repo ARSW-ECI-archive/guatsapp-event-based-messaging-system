@@ -39,7 +39,7 @@
         <!-- DESTINO DEL SUSCRIPTOR Y DEL CLIENTE: TÓPICO/COLA, Y SU NOMBRE-->
 	<bean id="destination" class="org.apache.activemq.command.ActiveMQTopic">
 
-		<constructor-arg value="Q2" />
+		<constructor-arg value="msgs" />
 
 	</bean>
 

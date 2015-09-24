@@ -8,6 +8,7 @@ package edu.eci.arsw.guassap.view;
 import edu.eci.arsw.guassap.messaging.MessageProducer;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.*;
 
 /**
  *
@@ -41,8 +42,7 @@ public class GuassapMainFrame extends javax.swing.JFrame implements Observer{
 
         jLabel1 = new javax.swing.JLabel();
         clientid = new javax.swing.JTextField();
-        conversationsp = new javax.swing.JScrollPane();
-        conversation = new javax.swing.JTextArea();
+        conversationtp = new javax.swing.JTabbedPane();
         jLabel2 = new javax.swing.JLabel();
         destinatario = new javax.swing.JTextField();
         msgSend = new javax.swing.JButton();
@@ -58,10 +58,6 @@ public class GuassapMainFrame extends javax.swing.JFrame implements Observer{
                 clientidActionPerformed(evt);
             }
         });
-
-        conversation.setColumns(20);
-        conversation.setRows(5);
-        conversationsp.setViewportView(conversation);
 
         jLabel2.setText("Destinatario:");
 
@@ -83,7 +79,7 @@ public class GuassapMainFrame extends javax.swing.JFrame implements Observer{
             .addGroup(layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(conversationsp)
+                    .addComponent(conversationtp)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(38, 38, 38)
@@ -107,7 +103,7 @@ public class GuassapMainFrame extends javax.swing.JFrame implements Observer{
                     .addComponent(jLabel1)
                     .addComponent(clientid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(conversationsp, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(conversationtp, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -136,8 +132,7 @@ public class GuassapMainFrame extends javax.swing.JFrame implements Observer{
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField clientid;
-    private javax.swing.JTextArea conversation;
-    private javax.swing.JScrollPane conversationsp;
+    private javax.swing.JTabbedPane conversationtp;
     private javax.swing.JTextField destinatario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -148,7 +143,38 @@ public class GuassapMainFrame extends javax.swing.JFrame implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-        this.conversation.setText(
-                this.conversation.getText()+"\n"+(String)arg);
+	String text = (String)arg;
+        addFromConversation(clientid.getText(),destinatario.getText(),text);
+    }
+
+    public JScrollPane createTabPane(String to) {
+	   JTextArea conversation = new JTextArea();
+           conversation.setColumns(20);
+           conversation.setRows(5);
+	   JScrollPane sp = new JScrollPane();
+           sp.setViewportView(conversation);
+	   conversationtp.addTab(to,null,sp);
+	   return sp;
+    }
+
+    private void addConversation(String tab,String text) {
+	   int idx = conversationtp.indexOfTab(tab);
+           JScrollPane sp;
+	   if (idx != -1) {
+	     sp = (JScrollPane)conversationtp.getComponentAt(idx);
+	   } else { 
+             sp = createTabPane(tab);
+	   }
+           JViewport viewport = sp.getViewport(); 
+	   JTextArea ta = (JTextArea)viewport.getView(); 
+           ta.setText(ta.getText()+"\n"+(String)text);
+    }
+
+    public void addFromConversation(String from,String to,String text) {
+	   addConversation(to,">> "+text);
+    }
+
+    public void addToConversation(String from,String to,String text) {
+	   addConversation(to,"<< "+text);
     }
 }
